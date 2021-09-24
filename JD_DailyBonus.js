@@ -1939,7 +1939,7 @@ function nobyda() {
     }
   }
   const AnError = (name, keyname, er, resp, body) => {
-     console.log(${merge});
+     console.log(merge);
     if (typeof(merge) != "undefined" && keyname) {
       if (!merge[keyname].notify) {
         merge[keyname].notify = `${name}: 异常, 已输出日志 ‼️`
