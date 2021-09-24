@@ -49,7 +49,7 @@ var DualKey = ''; //该参数已废弃; 仅用于下游脚本的兼容, 请使�
 // var OtherKey = ``; //无限账号Cookie json串数据, 请严格按照json格式填写, 具体格式请看以下样例:
 
 var OtherKey = `[{
-  "cookie":  "\""+process.env.JD_COOKIE+"\""
+   "cookie":  "`+process.env.JD_COOKIE+`"
 }]`
 
 /*以下样例为双账号("cookie"为必须,其他可选), 第一个账号仅包含Cookie, 第二个账号包含Cookie和金融签到Body: 
