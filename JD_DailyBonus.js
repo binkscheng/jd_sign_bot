@@ -1,48 +1,35 @@
 /*************************
-
 京东多合一签到脚本
-
 更新时间: 2021.09.09 20:20 v2.1.3
 有效接口: 20+
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 电报频道: @NobyDa 
 问题反馈: @NobyDa_bot 
 如果转载: 请注明出处
-
 *************************
 【 QX, Surge, Loon 说明 】 :
 *************************
-
 初次使用时, app配置文件添加脚本配置, 并启用Mitm后:
-
 Safari浏览器打开登录 https://home.m.jd.com/myJd/newhome.action 点击"我的"页面
 或者使用旧版网址 https://bean.m.jd.com/bean/signIndex.action 点击签到并且出现签到日历
 如果通知获取Cookie成功, 则可以使用此签到脚本. 注: 请勿在京东APP内获取!!!
-
 获取京东金融签到Body说明: 正确添加脚本配置后, 进入"京东金融"APP, 在"首页"点击"签到"并签到一次, 待通知提示成功即可.
-
 由于cookie的有效性(经测试网页Cookie有效周期最长31天)，如果脚本后续弹出cookie无效的通知，则需要重复上述步骤。 
 签到脚本将在每天的凌晨0:05执行, 您可以修改执行时间。 因部分接口京豆限量领取, 建议调整为凌晨签到。
-
 BoxJs或QX Gallery订阅地址: https://raw.githubusercontent.com/NobyDa/Script/master/NobyDa_BoxJs.json
-
 *************************
 【 配置多京东账号签到说明 】 : 
 *************************
-
 正确配置QX、Surge、Loon后, 并使用此脚本获取"账号1"Cookie成功后, 请勿点击退出账号(可能会导致Cookie失效), 需清除浏览器资料或更换浏览器登录"账号2"获取即可; 账号3或以上同理.
 注: 如需清除所有Cookie, 您可开启脚本内"DeleteCookie"选项 (第114行)
-
 *************************
 【 JSbox, Node.js 说明 】 :
 *************************
-
 开启抓包app后, Safari浏览器登录 https://home.m.jd.com/myJd/newhome.action 点击个人中心页面后, 返回抓包app搜索关键字 info/GetJDUserInfoUnion 复制请求头Cookie字段填入json串数据内即可
-
 如需获取京东金融签到Body, 可进入"京东金融"APP (iOS), 在"首页"点击"签到"并签到一次, 返回抓包app搜索关键字 h5/m/appSign 复制请求体填入json串数据内即可
 */
 
-var Key = process.env.JD_COOKIE; //该参数已废弃; 仅用于下游脚本的兼容, 请使用json串数据 ↓
+var Key = ''; //该参数已废弃; 仅用于下游脚本的兼容, 请使用json串数据 ↓
 
 var DualKey = ''; //该参数已废弃; 仅用于下游脚本的兼容, 请使用json串数据  ↓
 
@@ -50,65 +37,49 @@ var DualKey = ''; //该参数已废弃; 仅用于下游脚本的兼容, 请使�
 
 var OtherKey = `[{
    "cookie":  "`+process.env.JD_COOKIE+`"
-}]`
+}]`;
 
 /*以下样例为双账号("cookie"为必须,其他可选), 第一个账号仅包含Cookie, 第二个账号包含Cookie和金融签到Body: 
-
 var OtherKey = `[{
   "cookie": "pt_key=xxx;pt_pin=yyy;"
 }, {
   "cookie": "pt_key=yyy;pt_pin=xxx;",
   "jrBody": "reqData=xxx"
 }]`
-
    注1: 以上选项仅针对于JsBox或Node.js, 如果使用QX,Surge,Loon, 请使用脚本获取Cookie.
    注2: 多账号用户抓取"账号1"Cookie后, 请勿点击退出账号(可能会导致Cookie失效), 需清除浏览器资料或更换浏览器登录"账号2"抓取.
    注3: 如果使用Node.js, 需自行安装'request'模块. 例: npm install request -g
    注4: Node.js或JSbox环境下已配置数据持久化, 填写Cookie运行一次后, 后续更新脚本无需再次填写, 待Cookie失效后重新抓取填写即可.
    注5: 脚本将自动处理"持久化数据"和"手动填写cookie"之间的重复关系, 例如填写多个账号Cookie后, 后续其中一个失效, 仅需填写该失效账号的新Cookie即可, 其他账号不会被清除.
-
 *************************
 【Surge 4.2+ 脚本配置】:
 *************************
-
 [Script]
 京东多合一签到 = type=cron,cronexp=5 0 * * *,wake-system=1,timeout=60,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 获取京东Cookie = type=http-request,requires-body=1,pattern=^https:\/\/(api\.m|me-api|ms\.jr)\.jd\.com\/(client\.action\?functionId=signBean|user_new\/info\/GetJDUserInfoUnion\?|gw\/generic\/hy\/h5\/m\/appSign\?),script-path=https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 [MITM]
 hostname = ms.jr.jd.com, me-api.jd.com, api.m.jd.com
-
 *************************
 【Loon 2.1+ 脚本配置】:
 *************************
-
 [Script]
 cron "5 0 * * *" tag=京东多合一签到, script-path=https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 http-request ^https:\/\/(api\.m|me-api|ms\.jr)\.jd\.com\/(client\.action\?functionId=signBean|user_new\/info\/GetJDUserInfoUnion\?|gw\/generic\/hy\/h5\/m\/appSign\?) tag=获取京东Cookie, requires-body=true, script-path=https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 [MITM]
 hostname = ms.jr.jd.com, me-api.jd.com, api.m.jd.com
-
 *************************
 【 QX 1.0.10+ 脚本配置 】 :
 *************************
-
 [task_local]
 # 京东多合一签到
 5 0 * * * https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js, tag=京东多合一签到, img-url=https://raw.githubusercontent.com/NobyDa/mini/master/Color/jd.png,enabled=true
-
 [rewrite_local]
 # 获取京东Cookie. 
 ^https:\/\/(api\.m|me-api)\.jd\.com\/(client\.action\?functionId=signBean|user_new\/info\/GetJDUserInfoUnion\?) url script-request-header https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 # 获取钢镚签到body. 
 ^https:\/\/ms\.jr\.jd\.com\/gw\/generic\/hy\/h5\/m\/appSign\? url script-request-body https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
 [mitm]
 hostname = ms.jr.jd.com, me-api.jd.com, api.m.jd.com
-
 *************************/
 
 var LogDetails = false; //是否开启响应日志, true则开启
@@ -129,6 +100,22 @@ var merge = {};
 
 var KEY = '';
 
+const UA = `jdapp;iPhone;10.1.6;14.6;${randomWord(false,40,40)};network/wifi;JDEbook/openapp.jdreader;model/iPhone9,2;addressid/0;appBuild/167841;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16E158;supportJDSHWK/1`;
+function randomWord(randomFlag, min, max){
+  var str = "",
+    range = min,
+    arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+  // 随机产生
+  if(randomFlag){
+    range = Math.round(Math.random() * (max-min)) + min;
+  }
+  for(var i=0; i<range; i++){
+    pos = Math.round(Math.random() * (arr.length-1));
+    str += arr[pos];
+  }
+  return str;
+}
 async function all(cookie, jrBody) {
   KEY = cookie;
   merge = {};
@@ -153,17 +140,17 @@ async function all(cookie, jrBody) {
         // JingRongDoll(stop, 'JRFiveDoll', '京东金融-签伍', '1D06AA3B0F')
       ]);
       await Promise.all([
-        JDUserSignPre(stop, 'JDUndies', '京东商城-内衣', '4PgpL1xqPSW1sVXCJ3xopDbB1f69'), //京东内衣馆
+   //     JDUserSignPre(stop, 'JDUndies', '京东商城-内衣', '4PgpL1xqPSW1sVXCJ3xopDbB1f69'), //京东内衣馆
         JDUserSignPre(stop, 'JDCard', '京东商城-卡包', '7e5fRnma6RBATV9wNrGXJwihzcD'), //京东卡包
         // JDUserSignPre(stop, 'JDCustomized', '京东商城-定制', '2BJK5RBdvc3hdddZDS1Svd5Esj3R'), //京东定制
         JDUserSignPre(stop, 'JDaccompany', '京东商城-陪伴', 'kPM3Xedz1PBiGQjY4ZYGmeVvrts'), //京东陪伴
-        JDUserSignPre(stop, 'JDShoes', '京东商城-鞋靴', '4RXyb1W4Y986LJW8ToqMK14BdTD'), //京东鞋靴
-        JDUserSignPre(stop, 'JDChild', '京东商城-童装', '3Af6mZNcf5m795T8dtDVfDwWVNhJ'), //京东童装馆
+   //     JDUserSignPre(stop, 'JDShoes', '京东商城-鞋靴', '4RXyb1W4Y986LJW8ToqMK14BdTD'), //京东鞋靴
+   //     JDUserSignPre(stop, 'JDChild', '京东商城-童装', '3Af6mZNcf5m795T8dtDVfDwWVNhJ'), //京东童装馆
         JDUserSignPre(stop, 'JDBaby', '京东商城-母婴', '3BbAVGQPDd6vTyHYjmAutXrKAos6'), //京东母婴馆
         JDUserSignPre(stop, 'JD3C', '京东商城-数码', '4SWjnZSCTHPYjE5T7j35rxxuMTb6'), //京东数码电器馆
         JDUserSignPre(stop, 'JDWomen', '京东商城-女装', 'DpSh7ma8JV7QAxSE2gJNro8Q2h9'), //京东女装馆
         JDUserSignPre(stop, 'JDBook', '京东商城-图书', '3SC6rw5iBg66qrXPGmZMqFDwcyXi'), //京东图书
-        // JDUserSignPre(stop, 'ReceiveJD', '京东商城-领豆', 'Ni5PUSK7fzZc4EKangHhqPuprn2'), //京东-领京豆
+        JDUserSignPre(stop, 'ReceiveJD', '京东商城-领豆', 'c46tGzwvXueH7uKSjpXmPQP9Nod'), //京东-领京豆
         JingRongDoll(stop, 'JTDouble', '京东金贴-双签', '1DF13833F7'), //京东金融 金贴双签
         // JingRongDoll(stop, 'XJDouble', '金融现金-双签', 'F68B2C3E71', '', '', '', 'xianjin') //京东金融 现金双签
       ]);
@@ -172,16 +159,16 @@ async function all(cookie, jrBody) {
         JDUserSignPre(stop, 'JDPhone', '京东手机-小时', '4Vh5ybVr98nfJgros5GwvXbmTUpg'), //手机小时达
         JDUserSignPre(stop, 'JDEsports', '京东商城-电竞', 'CHdHQhA5AYDXXQN9FLt3QUAPRsB'), //京东电竞
         JDUserSignPre(stop, 'JDClothing', '京东商城-服饰', '4RBT3H9jmgYg1k2kBnHF8NAHm7m8'), //京东服饰
-        JDUserSignPre(stop, 'JDSuitcase', '京东商城-箱包', 'ZrH7gGAcEkY2gH8wXqyAPoQgk6t'), //京东箱包馆
+    //    JDUserSignPre(stop, 'JDSuitcase', '京东商城-箱包', 'ZrH7gGAcEkY2gH8wXqyAPoQgk6t'), //京东箱包馆
         JDUserSignPre(stop, 'JDSchool', '京东商城-校园', '2QUxWHx5BSCNtnBDjtt5gZTq7zdZ'), //京东校园
         JDUserSignPre(stop, 'JDHealth', '京东商城-健康', 'w2oeK5yLdHqHvwef7SMMy4PL8LF'), //京东健康
         JDUserSignPre(stop, 'JDShand', '京东拍拍-二手', '3S28janPLYmtFxypu37AYAGgivfp'), //京东拍拍二手
         JDUserSignPre(stop, 'JDClean', '京东商城-清洁', '2Tjm6ay1ZbZ3v7UbriTj6kHy9dn6'), //京东清洁馆
         JDUserSignPre(stop, 'JDCare', '京东商城-个护', '2tZssTgnQsiUqhmg5ooLSHY9XSeN'), //京东个人护理馆
-        JDUserSignPre(stop, 'JDJiaDian', '京东商城-家电', '3uvPyw1pwHARGgndatCXddLNUxHw'), // 京东小家电
-        // JDUserSignPre(stop, 'JDJewels', '京东商城-珠宝', 'zHUHpTHNTaztSRfNBFNVZscyFZU'), //京东珠宝馆
-        // JDUserSignPre(stop, 'JDMakeup', '京东商城-美妆', '2smCxzLNuam5L14zNJHYu43ovbAP'), //京东美妆馆
-        JDUserSignPre(stop, 'JDVege', '京东商城-菜场', 'Wcu2LVCFMkBP3HraRvb7pgSpt64'), //京东菜场
+    //    JDUserSignPre(stop, 'JDJiaDian', '京东商城-家电', '3X4HMWmUigG689ZUZAg3Yo8Wtqf5'), // 京东小家电
+        JDUserSignPre(stop, 'JDJewels', '京东商城-趣护', 'yhobhPM9LvDKmJxhRbXnYBko2gY'), //京东珠宝馆
+        JDUserSignPre(stop, 'JDMakeup', '京东商城-汽车', '34bHvkKjzxNFo6C4KUQeKb24bHUP'), //京东美妆馆
+    //    JDUserSignPre(stop, 'JDVege', '京东商城-菜场', 'Wcu2LVCFMkBP3HraRvb7pgSpt64'), //京东菜场
         // JDUserSignPre(stop, 'JDLive', '京东智能-生活', 'KcfFqWvhb5hHtaQkS4SD1UU6RcQ') //京东智能生活
       ]);
       await JingRongDoll(stop, 'JDDouble', '金融京豆-双签', 'F68B2C3E71', '', '', '', 'jingdou'); //京东金融 京豆双签
@@ -338,7 +325,7 @@ function notify() {
           }
         }
       } catch (e) {
-        throw new Error(`账号Cookie读取失败, 请检查Json格式. \n${OtherKey}`)
+        throw new Error(`账号Cookie读取失败, 请检查Json格式. \n${e.message}`)
       }
     }
     $nobyda.time();
@@ -465,7 +452,7 @@ function JingDongTurn(s) {
         headers: {
           Cookie: KEY
         },
-        body: 'body=%7B%22enAwardK%22%3A%2295d235f2a09578c6613a1a029b26d12d%22%2C%22riskParam%22%3A%7B%7D%7D&client=wh5'
+        body: 'body=%7B%22enAwardK%22%3A%225619e1d62ecb20014c54553cb608ac20%22%2C%22riskParam%22%3A%7B%7D%7D&client=wh5'
       };
       $nobyda.post(JDTUrl, async function(error, response, data) {
         try {
@@ -1858,7 +1845,7 @@ function nobyda() {
     return response
   }
   const get = (options, callback) => {
-    options.headers['User-Agent'] = 'JD4iPhone/167169 (iPhone; iOS 13.4.1; Scale/3.00)'
+    options.headers['User-Agent'] = UA
     if (isQuanX) {
       if (typeof options == "string") options = {
         url: options
@@ -1898,7 +1885,7 @@ function nobyda() {
     }
   }
   const post = (options, callback) => {
-    options.headers['User-Agent'] = 'JD4iPhone/167169 (iPhone; iOS 13.4.1; Scale/3.00)'
+    options.headers['User-Agent'] = UA
     if (options.body) options.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if (isQuanX) {
       if (typeof options == "string") options = {
@@ -1939,7 +1926,6 @@ function nobyda() {
     }
   }
   const AnError = (name, keyname, er, resp, body) => {
-     console.log(merge);
     if (typeof(merge) != "undefined" && keyname) {
       if (!merge[keyname].notify) {
         merge[keyname].notify = `${name}: 异常, 已输出日志 ‼️`
